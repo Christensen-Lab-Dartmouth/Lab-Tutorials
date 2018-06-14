@@ -8,7 +8,7 @@ Motivation
 
 RPMM: Recursively Partitioned Mixture Model is an iterative, unsupervised approach to identify clusters (subgroups) within high-dimensional data. It has been extensively used in analyzing **DNA methylation** of cytosine-phosphate-guanine (CpG) dinucleotides of the mammalian genome.
 
-As the name suggests, RPMM models data using multiple Beta- or Gaussian distributions. The iterative clustering is based on Bayesian Information Criterion (BIC) score and posterior probability (Houseman et al. 2008). Subsequent works of the authors have demonstrated efficient implementation of RPMM and robustness of the approach compared to conventional clustering methods such as K-means. Works of other groups, including the large-scale cohort study The Cancer Genome Atlas (TCGA) project, have applied RPMM for biological discovery.
+As the name suggests, RPMM models data using multiple Beta- or Gaussian distributions. The iterative clustering is based on Bayesian Information Criterion (BIC) score and posterior probability (Houseman et al. 2008). Subsequent works of the authors have demonstrated efficient implementation of RPMM and robustness of the approach compared to conventional clustering methods such as K-means. Works of other groups, including the large-scale cohort study The Cancer Genome Atlas (TCGA), have applied RPMM for biological discovery.
 
 Preparation and Import Packages
 -------------------------------
@@ -183,8 +183,8 @@ all( as.character(unsup_soft$RPMM.hard) == as.character(myHardLabels$RPMM)  )
 
     ## [1] TRUE
 
-Part II (Optional): Enhanced Heat Map Visualization
----------------------------------------------------
+(Optional) Data Visualization of RPMM Results by Specialized Heat Map Packages
+------------------------------------------------------------------------------
 
 While many R packages could be used to draw heat maps, here we choose `pheatmap` as it is rather convenient to use. Other packages such as `heatmap.3` could also be used, though their syntax may vary.
 
@@ -220,7 +220,7 @@ pheatmap(
   border_color = NA,
   fontsize_row = 5,
   fontsize_col = 4,
-  fontsize = 10
+  fontsize = 12 #size of tracking bar & label
 )
 ```
 
