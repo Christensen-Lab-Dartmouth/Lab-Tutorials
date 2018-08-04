@@ -12,6 +12,10 @@ library(limma)
 library(matrixStats)
 
 #----------------------------------Step 1. Methylation Data Preparation----------------------------------
+## First, load your methylation data
+# load(...) #betas
+# sheet <- read.csv(...) #sample covariates
+
 ## First, select 10,000 CpG loci with the greatest variance (across all samples)
 ## Ideally, you'd want to examine the variance distribution before selecting CpGs
 ## This approach reduces the number of statistical comparisons
@@ -27,17 +31,17 @@ mVals <- minfi::logit2(betas) #can also use: boot::logit(betas)
 stopifnot(identical(as.character(sheet$Sample_Name), colnames(mVals)))
 
 ## Assemble the design matrix:
-sheet$status <- ifelse(sheet$Sample_Group=="Cases", yes=1, no=0) #alternatively: 1 * (sheet$Sample_Group=="Cases")
+sheet$Status <- ifelse(sheet$Sample_Group=="Cases", yes=1, no=0) #alternatively: sheet$Status <- 1*(sheet$Sample_Group=="Cases")
 myDesign <- model.matrix( ~ Status + Sex + Age, data=sheet) #include more/fewer covariates as needed
-myDesign #Make sure that column no.2 is named "Sample_Group1", not "Sample_Group0"
+myDesign #Make sure that column no.2 is named "Status1", not "Status0"
 
 #----------------------------------Step 3. LIMMA Comparisons----------------------------------
 ## Execute statistical tests:
-fit <- lmFit(mVals, design=myDesign);
-fit2 <- eBayes(fit);
+fit <- lmFit(mVals, design=myDesign)
+fit2 <- eBayes(fit)
 
 ## Subset 450K annotation & identify:
-## Load Illumina annotation files
+## Load Illumina annotation files via Bioconductor data packaage:
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 annotCpGs <- as.data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19))
 
@@ -45,12 +49,10 @@ annotCpGs <- as.data.frame(getAnnotation(IlluminaHumanMethylation450kanno.ilmn12
 myCpGs <- annotCpGs[match(rownames(mVals),annotCpGs$Name), ]
 DMPs <- topTable(
   fit2,
-  number = Inf, 
-  coef = "Sample_Group1",
+  number = Inf,
+  coef = "Status1",
   genelist = myCpGs, 
-  adjust.method = "fdr", 
+  adjust.method = "fdr",
   sort.by = "p"
 )
 write.csv(DMPs, "~/Downloads/my_differential_CpGs.csv", row.names=FALSE, quote=FALSE)
-
-
